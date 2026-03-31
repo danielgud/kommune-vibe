@@ -21,7 +21,7 @@ export const TopList = ({ top10, currentResult, numberOfCards }: TopListProps) =
       <p className="mb-4 text-lg">Toppliste for {numberOfCards} kort</p>
 
       <div>
-        Du brukte <em>{currentResult.time}</em> sekunder. Her er topp 10:
+        Du brukte <em>{currentResult.time.toFixed(1)}</em> sekunder. Her er topp 10:
       </div>
 
       <ol className="text-xl">
@@ -30,12 +30,12 @@ export const TopList = ({ top10, currentResult, numberOfCards }: TopListProps) =
             <span>
               {index + 1}. {entry.name} {index === 0 && "👑"}
             </span>
-            <span>{entry.time} sekunder</span>
+            <span>{entry.time.toFixed(1)} sekunder</span>
           </li>
         ))}
       </ol>
 
-      <div className="text-center">
+      <div className="flex gap-3 justify-center">
         <Button onClick={() => window.location.reload()}>Spill igjen</Button>
       </div>
     </Modal>
