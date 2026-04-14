@@ -19,3 +19,40 @@ Classes not included in Tailwind
   backface-visibility: hidden;
 }
 
+/* Battleship hit explosion */
+@keyframes cell-explode {
+  0% {
+    transform: scale(1);
+    background-color: #ffffff;
+    box-shadow: 0 0 0 0px rgba(251, 146, 60, 0.9);
+  }
+  20% {
+    transform: scale(1.65);
+    background-color: #fef08a;
+    box-shadow: 0 0 0 6px rgba(251, 146, 60, 0.7);
+  }
+  45% {
+    transform: scale(1.35);
+    background-color: #fb923c;
+    box-shadow: 0 0 0 14px rgba(251, 146, 60, 0.3);
+  }
+  70% {
+    transform: scale(1.12);
+    background-color: #f97316;
+    box-shadow: 0 0 0 20px rgba(251, 146, 60, 0);
+  }
+  100% {
+    transform: scale(1);
+    background-color: #f97316;
+    box-shadow: none;
+  }
+}
+
+.cell-explode {
+  animation: cell-explode 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  position: relative;
+  z-index: 20;
+  /* Override the Tailwind transition so it doesn't fight the animation */
+  transition: none !important;
+}
+

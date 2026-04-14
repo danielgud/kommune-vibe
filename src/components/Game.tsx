@@ -6,7 +6,7 @@ import Card from "./Card";
 import { NamePrompt } from "./NamePrompt";
 import { Result, TopList } from "./TopList";
 import Timer from "./Timer";
-import { readTop10, writeTop10 } from "../utils/storage";
+import { readTop10, writeTop10, writeTop10Local } from "../utils/storage";
 
 type GameProps = {
   numberOfCards: number;
@@ -36,7 +36,8 @@ const Game = ({
   const [didMakeItToTop10, setDidMakeItToTop10] = useState(false);
   const [annoncePairs, setannoncePairs] = useState("");
   const [playerName, setPlayername] = useState("");
-  const [top10, setTop10] = useState<Result[]>(readTop10(numberOfCards));
+  const [top10, setTop10] = useState<Result[]>([]);
+  const [, setIsLoadingLeaderboard] = useState(true);
 
   const [activePlayer, setActivePlayer] = useState(0);
   const [scores, setScores] = useState<[number, number]>([0, 0]);
@@ -45,6 +46,16 @@ const Game = ({
     shuffleArray(cards);
     setCards(cards);
   }, [cards]);
+
+  useEffect(() => {
+    const loadLeaderboard = async () => {
+      setIsLoadingLeaderboard(true);
+      const leaderboard = await readTop10(numberOfCards);
+      setTop10(leaderboard);
+      setIsLoadingLeaderboard(false);
+    };
+    loadLeaderboard();
+  }, [numberOfCards]);
 
   useEffect(() => {
     if (!isGameFinished) {
@@ -114,14 +125,21 @@ const Game = ({
     }
   };
 
-  const handleSubmitName = (name: string) => {
+  const handleSubmitName = async (name: string) => {
     setPlayername(name);
     if (didMakeItToTop10) {
       const newTop10 = [...top10, { name, time: elapsedTime }]
         .sort((a, b) => a.time - b.time)
         .slice(0, 10);
       setTop10(newTop10);
-      writeTop10(numberOfCards, newTop10);
+
+      // Update localStorage immediately for instant feedback
+      writeTop10Local(numberOfCards, newTop10);
+
+      // Update cloud storage (don't wait for it)
+      writeTop10(numberOfCards, newTop10).catch(error => {
+        console.error('Failed to update cloud leaderboard:', error);
+      });
     }
   };
 

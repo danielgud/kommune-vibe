@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "./Button";
 import { Clouds } from "./Clouds";
 import { Credits } from "./Credits";
@@ -8,12 +8,36 @@ import { Result } from "./TopList";
 
 interface SplashScreenProps {
   onStartGame: (cardCount: number, isTwoPlayer: boolean) => void;
+  onBack?: () => void;
 }
 
-const SplashScreen = ({ onStartGame }: SplashScreenProps) => {
+const SplashScreen = ({ onStartGame, onBack }: SplashScreenProps) => {
   const [showCredits, setShowCredits] = useState(false);
   const [isTwoPlayerMode, setIsTwoPlayerMode] = useState<boolean | null>(null);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const [leaderboardData, setLeaderboardData] = useState<{[key: number]: Result[]}>({});
+  const [isLoadingLeaderboard, setIsLoadingLeaderboard] = useState(false);
+
+  const loadLeaderboardData = async () => {
+    setIsLoadingLeaderboard(true);
+    try {
+      const data: {[key: number]: Result[]} = {};
+      for (const cardCount of [20, 36, 64]) {
+        data[cardCount] = await readTop10(cardCount);
+      }
+      setLeaderboardData(data);
+    } catch (error) {
+      console.error('Failed to load leaderboard data:', error);
+    } finally {
+      setIsLoadingLeaderboard(false);
+    }
+  };
+
+  useEffect(() => {
+    if (showLeaderboard && Object.keys(leaderboardData).length === 0) {
+      loadLeaderboardData();
+    }
+  }, [showLeaderboard]);
 
   return (
     <div className="flex flex-col items-center h-full overflow-hidden">
@@ -46,29 +70,33 @@ const SplashScreen = ({ onStartGame }: SplashScreenProps) => {
             {showLeaderboard && (
               <div className="bg-black bg-opacity-50 p-6 rounded-lg max-w-2xl w-full max-h-96 overflow-y-auto">
                 <h2 className="text-white text-2xl font-bold mb-4 text-center">Topplister</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {[20, 36, 64].map(cardCount => {
-                    const top10 = readTop10(cardCount);
-                    const boardSize = cardCount === 20 ? '4x5' : cardCount === 36 ? '6x6' : '8x8';
-                    return (
-                      <div key={cardCount} className="bg-white bg-opacity-10 p-4 rounded">
-                        <h3 className="text-white text-lg font-semibold mb-2 text-center">{boardSize}</h3>
-                        {top10.length > 0 ? (
-                          <ol className="text-sm">
-                            {top10.slice(0, 5).map((entry: Result, index: number) => (
-                              <li key={index} className="flex justify-between text-white py-1">
-                                <span>{index + 1}. {entry.name}</span>
-                                <span>{entry.time.toFixed(1)}s</span>
-                              </li>
-                            ))}
-                          </ol>
-                        ) : (
-                          <p className="text-white text-sm text-center">Ingen resultater ennå</p>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
+                {isLoadingLeaderboard ? (
+                  <div className="text-white text-center">Laster topplister...</div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {[20, 36, 64].map(cardCount => {
+                      const top10 = leaderboardData[cardCount] || [];
+                      const boardSize = cardCount === 20 ? '4x5' : cardCount === 36 ? '6x6' : '8x8';
+                      return (
+                        <div key={cardCount} className="bg-white bg-opacity-10 p-4 rounded">
+                          <h3 className="text-white text-lg font-semibold mb-2 text-center">{boardSize}</h3>
+                          {top10.length > 0 ? (
+                            <ol className="text-sm">
+                              {top10.slice(0, 5).map((entry: Result, index: number) => (
+                                <li key={index} className="flex justify-between text-white py-1">
+                                  <span>{index + 1}. {entry.name}</span>
+                                  <span>{entry.time.toFixed(1)}s</span>
+                                </li>
+                              ))}
+                            </ol>
+                          ) : (
+                            <p className="text-white text-sm text-center">Ingen resultater ennå</p>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             )}
           </>
@@ -96,6 +124,17 @@ const SplashScreen = ({ onStartGame }: SplashScreenProps) => {
           Zup
         </p>
       </div>
+
+      {onBack && (
+        <div className="absolute top-4 left-4 z-20">
+          <button
+            onClick={onBack}
+            className="text-white underline text-sm opacity-80 hover:opacity-100"
+          >
+            ← Tilbake
+          </button>
+        </div>
+      )}
 
       <div className="absolute bottom-5 right-5 w-20 h-auto ">
         <button
