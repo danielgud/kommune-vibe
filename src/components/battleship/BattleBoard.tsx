@@ -45,6 +45,12 @@ export const BattleBoard = ({
   const prevShotsRef = useRef(shots);
   const [animatingHits, setAnimatingHits] = useState<Set<string>>(new Set());
   const targetBoardRef = useRef<HTMLDivElement>(null);
+  const [showOwnBoard, setShowOwnBoard] = useState(false);
+
+  // Hide own board whenever the active player changes
+  useEffect(() => {
+    setShowOwnBoard(false);
+  }, [currentPlayerName]);
 
   useEffect(() => {
     const prev = prevShotsRef.current;
@@ -99,7 +105,7 @@ export const BattleBoard = ({
   return (
     <div className="min-h-screen bg-[url('/bg.png')] bg-no-repeat bg-cover flex flex-col items-center p-4 gap-5">
       {/* Header / status */}
-      <div className="w-full max-w-5xl bg-white bg-opacity-95 rounded-2xl shadow-md px-6 py-4 flex items-center justify-between gap-4 flex-wrap">
+      <div className="w-full max-w-2xl bg-white bg-opacity-95 rounded-2xl shadow-md px-6 py-4 flex items-center justify-between gap-4 flex-wrap">
         <div className="text-center min-w-[80px]">
           <p className="text-xs text-gray-400 uppercase tracking-wide">Mine tap</p>
           <p className="font-bold text-red-500 text-lg">{sunkenOwn}/{ownShips.length}</p>
@@ -120,38 +126,46 @@ export const BattleBoard = ({
         </div>
       </div>
 
-      {/* Boards */}
-      <div className="flex flex-wrap gap-6 justify-center items-start w-full max-w-5xl">
-        {/* Own board */}
-        <div className="bg-white bg-opacity-95 rounded-2xl shadow-md p-5 flex flex-col items-center gap-3">
-          <p className="text-gray-500 text-sm font-semibold uppercase tracking-wide">
-            {currentPlayerName} — Ditt brett
-          </p>
-          <Grid
-            cellSize={28}
-            getVariant={(r, c) => ownVariant(ownBoard[r][c])}
-          />
-        </div>
-
-        {/* Target board */}
-        <div
-          ref={targetBoardRef}
-          className="bg-white bg-opacity-95 rounded-2xl shadow-md p-5 flex flex-col items-center gap-3 ring-2 ring-blue-400/50"
-        >
-          <p className="text-blue-600 text-sm font-semibold uppercase tracking-wide">
-            {opponentName} — Skyt her
-          </p>
-          <Grid
-            cellSize={36}
-            getVariant={(r, c) => shotVariant(shots[r][c])}
-            onCellClick={handleTargetClick}
-            animatingHits={animatingHits}
-          />
-        </div>
+      {/* Target board — always visible, center of attention */}
+      <div
+        ref={targetBoardRef}
+        className="bg-white bg-opacity-95 rounded-2xl shadow-md p-5 flex flex-col items-center gap-3 ring-2 ring-blue-400/50"
+      >
+        <p className="text-blue-600 text-sm font-semibold uppercase tracking-wide">
+          {opponentName} — Skyt her 🎯
+        </p>
+        <Grid
+          cellSize={36}
+          getVariant={(r, c) => shotVariant(shots[r][c])}
+          onCellClick={handleTargetClick}
+          animatingHits={animatingHits}
+        />
       </div>
 
-      {/* Sunken ships */}
-      <div className="w-full max-w-5xl bg-white bg-opacity-95 rounded-2xl shadow-md px-5 py-4">
+      {/* Own board — hidden by default to prevent opponent peeking */}
+      <div className="w-full max-w-2xl bg-white bg-opacity-95 rounded-2xl shadow-md px-5 py-4 flex flex-col items-center gap-4">
+        <button
+          onClick={() => setShowOwnBoard(v => !v)}
+          className="text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors"
+        >
+          {showOwnBoard ? '🙈 Skjul mitt brett' : '👁️ Vis mitt brett'}
+        </button>
+
+        {showOwnBoard && (
+          <>
+            <p className="text-xs text-amber-600 font-semibold -mt-2">
+              ⚠️ Sørg for at {opponentName} ikke ser på!
+            </p>
+            <Grid
+              cellSize={28}
+              getVariant={(r, c) => ownVariant(ownBoard[r][c])}
+            />
+          </>
+        )}
+      </div>
+
+      {/* Sunken opponent ships */}
+      <div className="w-full max-w-2xl bg-white bg-opacity-95 rounded-2xl shadow-md px-5 py-4">
         <p className="text-gray-400 text-xs uppercase tracking-wide mb-3">
           Sunkne skip — {opponentName}
         </p>
