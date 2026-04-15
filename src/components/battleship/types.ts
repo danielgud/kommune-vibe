@@ -26,6 +26,7 @@ export interface PassInfo {
   message: string;
   subMessage?: string;
   nextPhase: 'placing' | 'battle';
+  autoAdvanceMs?: number; // if set, overlay auto-dismisses after this many ms
 }
 
 export interface GameState {

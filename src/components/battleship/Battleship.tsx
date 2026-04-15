@@ -96,22 +96,29 @@ const Battleship = () => {
       newPlayers[cp].shots[row][col] = isHit ? 'hit' : 'miss';
       newPlayers[op].board[row][col] = isHit ? 'hit' : 'miss';
 
-      const msg = isHit ? `Treff! 💥` : `Bom! 🌊`;
+      const msg = isHit ? `Treff! 💥 Skyt igjen!` : `Bom! 🌊`;
       setLastMessage(msg);
 
       if (isHit && allShipsSunk(newPlayers[op].ships, newPlayers[op].board)) {
         return { ...prev, players: newPlayers, phase: 'finished', winner: cp };
       }
 
+      // Hit: current player shoots again — no pass needed
+      if (isHit) {
+        return { ...prev, players: newPlayers, phase: 'battle' };
+      }
+
+      // Miss: switch player with auto-dismissing transition overlay
       return {
         ...prev,
         players: newPlayers,
         phase: 'pass',
         currentPlayer: op,
         pass: {
-          message: `${msg} Gi enheten videre`,
-          subMessage: `${newPlayers[op].name}s tur`,
+          message: `${newPlayers[op].name}s tur`,
+          subMessage: `${newPlayers[cp].name} bommet`,
           nextPhase: 'battle',
+          autoAdvanceMs: 3000,
         },
       };
     });
@@ -140,6 +147,7 @@ const Battleship = () => {
         message={pass.message}
         subMessage={pass.subMessage}
         playerName={players[cp].name}
+        autoAdvanceMs={pass.autoAdvanceMs}
         onReady={handlePassReady}
       />
     );
