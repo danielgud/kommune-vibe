@@ -22,7 +22,7 @@ export const GuesswhoLobby = ({ onStart }: GuesswhoLobbyProps) => {
       <div className="bg-white bg-opacity-95 rounded-3xl shadow-xl p-8 w-full max-w-md flex flex-col gap-6">
         <div className="text-center">
           <div className="text-5xl mb-3">🔍</div>
-          <h1 className="text-3xl font-bold text-amber-800">Hvem er det?</h1>
+          <h1 className="text-3xl font-bold text-amber-800">Gjett hvem</h1>
           <p className="text-gray-500 mt-1 text-sm">
             Gjett motstanderens hemmelige kommunevåpen!
           </p>

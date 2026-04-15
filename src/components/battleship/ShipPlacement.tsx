@@ -58,34 +58,34 @@ export const ShipPlacement = ({ playerName, onDone }: ShipPlacementProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-4 gap-6">
+    <div className="min-h-screen bg-[url('/bg.png')] bg-no-repeat bg-cover flex flex-col items-center justify-center p-4 gap-6">
       {/* Header */}
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-white">
+        <h2 className="text-2xl font-bold text-white drop-shadow">
           {playerName} — Plasser skipene dine
         </h2>
-        <p className="text-slate-400 text-sm mt-1">
-          Klikk på brettet for å plassere, <kbd className="bg-slate-700 text-slate-300 px-1.5 py-0.5 rounded text-xs">R</kbd> for å rotere
+        <p className="text-white/80 text-sm mt-1 drop-shadow">
+          Klikk på brettet for å plassere, <kbd className="bg-white/20 text-white px-1.5 py-0.5 rounded text-xs">R</kbd> for å rotere
         </p>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6 items-start justify-center w-full max-w-4xl">
         {/* Grid panel */}
-        <div className="bg-slate-800 border border-slate-700 rounded-2xl p-5 flex flex-col items-center gap-4">
+        <div className="bg-white bg-opacity-95 rounded-2xl shadow-md p-5 flex flex-col items-center gap-4">
           <div className="flex items-center justify-between w-full">
             {currentShipDef && !allPlaced ? (
-              <p className="text-sky-400 text-sm font-semibold">
-                Plasserer: <span className="text-white">{currentShipDef.name}</span>
-                <span className="text-slate-500 ml-1">({currentShipDef.size} celler)</span>
+              <p className="text-blue-600 text-sm font-semibold">
+                Plasserer: <span className="text-gray-800">{currentShipDef.name}</span>
+                <span className="text-gray-400 ml-1">({currentShipDef.size} celler)</span>
               </p>
             ) : allPlaced ? (
-              <p className="text-emerald-400 text-sm font-semibold">✓ Alle skip plassert</p>
+              <p className="text-emerald-600 text-sm font-semibold">✓ Alle skip plassert</p>
             ) : (
               <div />
             )}
             <button
               onClick={() => setOrientation(o => (o === 'H' ? 'V' : 'H'))}
-              className="bg-slate-700 hover:bg-slate-600 text-slate-300 text-sm font-semibold px-3 py-1.5 rounded-lg transition-colors border border-slate-600 flex items-center gap-1.5"
+              className="bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-semibold px-3 py-1.5 rounded-lg transition-colors border border-gray-200 flex items-center gap-1.5"
             >
               {orientation === 'H' ? '↔' : '↕'}
               {orientation === 'H' ? 'Horisontalt' : 'Vertikalt'}
@@ -102,8 +102,8 @@ export const ShipPlacement = ({ playerName, onDone }: ShipPlacementProps) => {
         </div>
 
         {/* Ship list panel */}
-        <div className="bg-slate-800 border border-slate-700 rounded-2xl p-5 w-full lg:w-60 flex flex-col gap-3">
-          <h3 className="text-slate-300 font-semibold text-sm uppercase tracking-wide">Skip</h3>
+        <div className="bg-white bg-opacity-95 rounded-2xl shadow-md p-5 w-full lg:w-60 flex flex-col gap-3">
+          <h3 className="text-gray-500 font-semibold text-sm uppercase tracking-wide">Skip</h3>
 
           {SHIPS.map((ship, index) => {
             const placed = index < placedShips.length;
@@ -113,20 +113,20 @@ export const ShipPlacement = ({ playerName, onDone }: ShipPlacementProps) => {
                 key={ship.name}
                 className={`rounded-xl border px-3 py-2.5 transition-colors ${
                   active
-                    ? 'border-sky-500 bg-sky-900/40'
+                    ? 'border-blue-400 bg-blue-50'
                     : placed
-                    ? 'border-emerald-700 bg-emerald-900/20'
-                    : 'border-slate-700 bg-slate-700/30 opacity-50'
+                    ? 'border-emerald-300 bg-emerald-50'
+                    : 'border-gray-200 bg-gray-50 opacity-50'
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className={`text-sm font-semibold ${active ? 'text-sky-300' : placed ? 'text-emerald-400' : 'text-slate-500'}`}>
+                  <span className={`text-sm font-semibold ${active ? 'text-blue-700' : placed ? 'text-emerald-700' : 'text-gray-400'}`}>
                     {placed ? '✓ ' : active ? '→ ' : ''}{ship.name}
                   </span>
                   {placed && (
                     <button
                       onClick={() => handleRemoveShip(index)}
-                      className="text-xs text-red-400 hover:text-red-300 transition-colors ml-2"
+                      className="text-xs text-red-400 hover:text-red-600 transition-colors ml-2"
                     >
                       Fjern
                     </button>
@@ -138,7 +138,7 @@ export const ShipPlacement = ({ playerName, onDone }: ShipPlacementProps) => {
                     <div
                       key={i}
                       className={`h-2 flex-1 rounded-sm ${
-                        placed ? 'bg-emerald-600' : active ? 'bg-sky-600' : 'bg-slate-600'
+                        placed ? 'bg-emerald-500' : active ? 'bg-blue-500' : 'bg-gray-300'
                       }`}
                     />
                   ))}
@@ -150,7 +150,7 @@ export const ShipPlacement = ({ playerName, onDone }: ShipPlacementProps) => {
           {allPlaced && (
             <button
               onClick={() => onDone(board, placedShips)}
-              className="mt-2 w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-base py-3 rounded-xl transition-colors focus-visible:ring-4 ring-emerald-400 ring-offset-2 ring-offset-slate-800"
+              className="mt-2 w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-base py-3 rounded-xl transition-colors shadow focus-visible:ring-4 ring-emerald-400 ring-offset-2"
             >
               Bekreft ✓
             </button>

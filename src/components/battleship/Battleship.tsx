@@ -163,25 +163,25 @@ const Battleship = () => {
 
   if (phase === 'finished' && winner !== null) {
     return (
-      <div className="fixed inset-0 bg-slate-900 flex items-center justify-center p-6">
-        <div className="bg-slate-800 border border-slate-700 rounded-2xl p-10 text-center max-w-sm w-full">
+      <div className="fixed inset-0 bg-[url('/bg.png')] bg-no-repeat bg-cover flex items-center justify-center p-6">
+        <div className="bg-white rounded-3xl shadow-2xl p-10 text-center max-w-sm w-full">
           <div className="text-6xl mb-4">🏆</div>
-          <h2 className="text-3xl font-bold text-white mb-2">
+          <h2 className="text-3xl font-bold text-blue-900 mb-2">
             {players[winner].name} vinner!
           </h2>
-          <p className="text-slate-400 mb-8">
+          <p className="text-gray-400 mb-8">
             Alle {players[winner === 0 ? 1 : 0].name}s skip er sunket!
           </p>
           <div className="flex flex-col gap-3">
             <button
               onClick={() => setState(initialState())}
-              className="bg-sky-600 hover:bg-sky-500 text-white font-bold py-3 rounded-xl transition-colors"
+              className="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-colors shadow"
             >
               Spill igjen
             </button>
             <button
               onClick={() => navigate('/')}
-              className="bg-slate-700 hover:bg-slate-600 text-slate-300 font-semibold py-3 rounded-xl transition-colors"
+              className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-xl transition-colors"
             >
               Tilbake til start
             </button>

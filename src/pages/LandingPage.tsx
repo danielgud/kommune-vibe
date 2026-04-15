@@ -75,7 +75,7 @@ const LandingPage = () => {
           gradient="bg-gradient-to-br from-blue-500 to-blue-800"
         />
         <GameCard
-          title="Hvem er det?"
+          title="Gjett hvem"
           description="Gjett motstanderens hemmelige kommunevåpen ved å stille ja/nei-spørsmål!"
           emoji="🔍"
           path="/guesswho"
