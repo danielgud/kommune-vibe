@@ -163,27 +163,35 @@ const Guesswho = () => {
   }
 
   if (phase === 'finished' && winner !== null) {
-    const op = (winner === 0 ? 1 : 0) as 0 | 1;
     return (
       <div className="fixed inset-0 bg-[url('/bg.png')] bg-no-repeat bg-cover flex items-center justify-center p-6">
-        <div className="bg-white rounded-3xl shadow-2xl p-10 text-center max-w-sm w-full">
-          <div className="text-6xl mb-4">🏆</div>
-          <h2 className="text-3xl font-bold text-amber-800 mb-2">
+        <div className="bg-white rounded-3xl shadow-2xl p-8 text-center max-w-sm w-full">
+          <div className="text-6xl mb-3">🏆</div>
+          <h2 className="text-3xl font-bold text-amber-800 mb-6">
             {players[winner].name} vinner!
           </h2>
-          <p className="text-gray-500 mb-2">
-            {players[op].name}s hemmelige kommunevåpen var:
-          </p>
-          {players[op].secret && (
-            <div className="flex flex-col items-center gap-1 mb-6">
-              <img
-                src={players[op].secret.image}
-                alt={players[op].secret.navn}
-                className="w-20 h-20 object-contain"
-              />
-              <p className="font-bold text-lg text-gray-800">{players[op].secret.navn}</p>
-            </div>
-          )}
+
+          <div className="flex justify-center gap-6 mb-6">
+            {([0, 1] as const).map(i => (
+              <div key={i} className="flex flex-col items-center gap-1">
+                <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">
+                  {players[i].name}
+                  {i === winner ? ' 🏆' : ' 💀'}
+                </span>
+                {players[i].secret && (
+                  <>
+                    <img
+                      src={players[i].secret!.image}
+                      alt={players[i].secret!.navn}
+                      className="w-20 h-20 object-contain"
+                    />
+                    <p className="font-bold text-sm text-gray-800">{players[i].secret!.navn}</p>
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
+
           <div className="flex flex-col gap-3">
             <button
               onClick={() => setState(initialState())}
